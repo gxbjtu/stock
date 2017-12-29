@@ -17,7 +17,7 @@ DB_IS_RUN=`docker ps --filter "name=mariadb" --filter "status=running" | wc -l `
 
 if [ $DB_IS_RUN -ne 2 ]; then
     docker run --name mariadb -v /data/mariadb/data:/var/lib/mysql \
-    -e MYSQL_ROOT_PASSWORD=mariadb -p 3306:3306 -d mariadb:latest
+    -e MYSQL_ROOT_PASSWORD=mariadb -p 3305:3306 -d mariadb:latest
     echo "starting mariadb ..."
 else
     echo "mariadb is running !!!"
