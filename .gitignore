@@ -110,3 +110,6 @@ doc
 /bin
 pkg
 *.tmp
+
+Pipfile
+Pipfile.lock
