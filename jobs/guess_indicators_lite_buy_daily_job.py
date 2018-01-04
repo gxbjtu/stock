@@ -19,20 +19,21 @@ def stat_all_lite(tmp_datetime):
     print("datetime_str:", datetime_str)
     print("datetime_int:", datetime_int)
 
+    # try:
+    #     # 删除老数据。guess_indicators_lite_buy_daily 是一张单表，没有日期字段。
+    #     del_sql = " DELETE FROM `stock_data`.`%s` WHERE `date`= '%s' " % (table_name, datetime_int)
+    #     print("del_sql:", del_sql)
+    #     common.insert(del_sql)
+    #     print("del_sql")
+    # except Exception as e:
+    #     print("error :", e)
+
     sql_1 = """
-            SELECT `date`, `code`, `name`, `changepercent`, `trade`,`turnoverratio`, `pb` ,`kdjj`,`rsi_6`,`cci`
-                        FROM stock_data.guess_indicators_lite_daily WHERE `date` = %s 
-                        and `changepercent` > 2 and `pb` > 0 and `turnoverratio` > 5
-    """
-
-    try:
-        # 删除老数据。
-        del_sql = " DELETE FROM `stock_data`.`` WHERE `date`= '%s' " % (table_name, datetime_int)
-        # common.insert(del_sql)
-        print("del_sql")
-    except Exception as e:
-        print("error :", e)
-
+                SELECT `date`, `code`, `name`, `changepercent`, `trade`,`turnoverratio`, `pb` ,`kdjj`,`rsi_6`,`cci`
+                            FROM stock_data.guess_indicators_lite_daily WHERE `date` = %s 
+                            and `changepercent` > 2 and `pb` > 0 
+        """
+    # and `changepercent` > 2 and `pb` > 0 and `turnoverratio` > 5 去除掉换手率参数。
     data = pd.read_sql(sql=sql_1, con=common.engine(), params=[datetime_int])
     data = data.drop_duplicates(subset="code", keep="last")
     print("######## len data ########:", len(data))
@@ -59,7 +60,7 @@ def stat_all_lite(tmp_datetime):
     data_new["wave_crest"] = data_new["wave_crest"].round(2)  # 数据保留2位小数
     data_new["wave_mean"] = data_new["wave_mean"].round(2)  # 数据保留2位小数
 
-    data_new["up_rate"] = (data_new["trade_float32"].sub(data_new["wave_mean"])).div(data_new["wave_crest"]).mul(100)
+    data_new["up_rate"] = (data_new["wave_mean"].sub(data_new["trade_float32"])).div(data_new["wave_crest"]).mul(100)
     data_new["up_rate"] = data_new["up_rate"].round(2)  # 数据保留2位小数
 
     data_new["buy"] = 1
