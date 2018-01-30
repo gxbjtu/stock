@@ -1,18 +1,38 @@
 ### 使用方法（依赖docker）
 
-git clone https://github.com/pythonstock/stock.git && cd stock/docker && sh startStock.sh
+已经放到docker hub上了
 
+```
+mkdir -p /data/mariadb/data
+docker pull pythonstock/pythonstock:latest
+docker pull mariadb:latest
 
+docker run --name mariadb -v /data/mariadb/data:/var/lib/mysql \
+    -e MYSQL_ROOT_PASSWORD=mariadb -p 3306:3306 -d mariadb:latest
+
+docker run -itd --link=mariadb --name stock  \
+    -p 8888:8888 \
+    -p 6006:6006 \
+    -p 9999:9999 \
+    -p 8500:8500 \
+    -p 9001:9001 \
+    pythonstock/pythonstock:latest
+
+```
+
+### 本地构建
+
+其中构建文件参考 Dockerfile
 
 首先会下载相关镜像，然后在进行构建。启动mariadb，并讲stock和mariadb链接起来。
 
 ```
 依赖这两个镜像，tensorflow镜像比较大。
-docker.io/tensorflow/tensorflow:latest-py3
+docker.io/tensorflow/tensorflow:latest
 docker.io/mariadb:latest
 ```
 
-访问端口：
+### 访问端口
 
 > http://localhost:9999 web 
 >
@@ -21,6 +41,9 @@ docker.io/mariadb:latest
 > http://localhost:6006 tensorBoard
 
 ### 1，股票系统设计
+
+相关博客资料：
+http://blog.csdn.net/freewebsys/article/category/7076584
 
 股票数据抓取框架使用TuShare。
 http://tushare.org/
